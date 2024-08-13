@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:maths_language/controllers/file_handler.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
 
 void main() => runApp(MyApp());
@@ -13,12 +16,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
+  FileHandler file = FileHandler();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
-   
   }
 
   // Platform messages are asynchronous, so we initialize via an async method.
@@ -34,7 +38,7 @@ class _MyAppState extends State<MyApp> {
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
+    // setState to update our non-existent appearance.""
     if (!mounted) return;
 
     setState(() {
@@ -42,15 +46,19 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  openSlide()async{
-var documentLoadedCancel = startDocumentLoadedListener((filePath) {
-      print("CHEGUEI AQUI");
+  openFile(String path) async {
+    startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
-    await  PdftronFlutter.openDocument("https://scholar.harvard.edu/files/torman_personal/files/samplepptx.pptx");
 
-     
-   
+    await PdftronFlutter.openDocument(path);
+  }
+
+  getContent() async {
+    File filePath = await file.getFile();
+    if (filePath.path.isNotEmpty) {
+      openFile(filePath.path);
+    }
   }
 
   @override
@@ -58,10 +66,14 @@ var documentLoadedCancel = startDocumentLoadedListener((filePath) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('PDFTron flutter app'),
+          title: const Text('Teste'),
+          centerTitle: true,
         ),
         body: Center(
-          child: TextButton(child: Text("Abrir PPTX"), onPressed: openSlide,),
+          child: TextButton(
+            child: Text("Abrir conteúdo"),
+            onPressed: getContent,
+          ),
         ),
       ),
     );
