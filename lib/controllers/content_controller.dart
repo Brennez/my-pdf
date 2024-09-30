@@ -1,46 +1,44 @@
-import 'dart:io';
-
-import 'package:flutter/services.dart';
-import 'package:maths_language/controllers/file_handler.dart';
-import 'package:pdftron_flutter/pdftron_flutter.dart';
+import 'package:maths_language/models/content_model.dart';
 
 class ContentController {
-  FileHandler fileHandler = FileHandler();
-
-  // Platform messages are asynchronous, so we initialize via an async method.
-  Future<String> initPlatformState() async {
-    String version;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      PdftronFlutter.initialize();
-      version = await PdftronFlutter.version;
-    } on PlatformException {
-      version = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.""
-    // if (!mounted) return;
-
-    // setState(() {
-    //   _version = version;
-    // });
-    return version;
-  }
-
-  Future<void> openFile(String path) async {
-    startDocumentLoadedListener((filePath) {
-      print("document loaded: $filePath");
-    });
-
-    await PdftronFlutter.openDocument(path);
-  }
-
-  getContent() async {
-    File filePath = await fileHandler.getFile();
-    if (filePath.path.isNotEmpty) {
-      openFile(filePath.path);
-    }
+  Future<List<dynamic>> fetchContents(int id) async {
+    final List<ContentModel> mockContentList = [
+      ContentModel(
+        thumbnailPath:
+            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
+        name: "Conteúdo 1",
+        description: "Descrição do conteúdo 1",
+        updatedAt: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      ContentModel(
+        thumbnailPath:
+            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
+        name: "Conteúdo 2",
+        description: "Descrição do conteúdo 2",
+        updatedAt: DateTime.now().subtract(Duration(days: 2)),
+      ),
+      ContentModel(
+        thumbnailPath:
+            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
+        name: "Conteúdo 3",
+        description: "Descrição do conteúdo 3",
+        updatedAt: DateTime.now().subtract(Duration(days: 3)),
+      ),
+      ContentModel(
+        thumbnailPath:
+            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
+        name: "Conteúdo 4",
+        description: "Descrição do conteúdo 4",
+        updatedAt: DateTime.now().subtract(Duration(days: 4)),
+      ),
+      ContentModel(
+        thumbnailPath:
+            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
+        name: "Conteúdo 5",
+        description: "Descrição do conteúdo 5",
+        updatedAt: DateTime.now().subtract(Duration(days: 5)),
+      ),
+    ];
+    return mockContentList;
   }
 }

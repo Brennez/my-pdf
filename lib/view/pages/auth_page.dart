@@ -5,7 +5,7 @@ import 'package:maths_language/stores/global_stores/global_store.dart';
 import 'package:maths_language/view/pages/home_page.dart';
 
 import '../../stores/authentication_stores/auth_store.dart';
-import '../widgets/input_widget.dart';
+import '../widgets/input_component.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
@@ -23,95 +23,97 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Widget build(BuildContext context) {
     AuthStore authStore = AuthStore();
 
-    return Observer(builder: (context) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(authStore.isRegister ? "Cadastro" : "Login"),
-            const SizedBox(
-              height: 10,
-            ),
-            Visibility(
-              visible: authStore.isRegister,
-              child: InputWidget(
-                controller: _nameController,
-                hintText: "nome",
+    return Scaffold(
+      body: Observer(builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(authStore.isRegister ? "Cadastro" : "Login"),
+              const SizedBox(
+                height: 10,
+              ),
+              Visibility(
+                visible: authStore.isRegister,
+                child: InputComponent(
+                  controller: _nameController,
+                  hintText: "nome",
+                  isPassword: false,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InputComponent(
+                controller: _emailController,
+                hintText: "e-mail",
                 isPassword: false,
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            InputWidget(
-              controller: _emailController,
-              hintText: "e-mail",
-              isPassword: false,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            InputWidget(
-              controller: _passwordController,
-              hintText: "senha",
-              isPassword: true,
-            ),
-            Row(
-              children: [
-                Observer(builder: (context) {
-                  return TextButton(
-                    onPressed: () {
-                      authStore.toogleAuthMethod();
-                    },
-                    child: Text(
-                      authStore.isRegister
-                          ? "Já possuo uma conta"
-                          : "Fazer cadastro",
-                      style: const TextStyle(fontSize: 13),
-                    ),
-                  );
-                })
-              ],
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 50,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(horizontal: 20)),
-                onPressed: () async {
-                  String name = _nameController.text;
-                  String email = _emailController.text;
-                  String password = _passwordController.text;
-
-                  await authentication(
-                      UserModel(name: name, email: email, password: password),
-                      authStore);
-
-                  if (authStore.errorMessage != null) {
-                    showErrorDialog(context, authStore);
-                  }
-                  navigateToHomePage(context);
-                },
-                child: authStore.isLoading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                    : const Text(
-                        "Entrar",
-                        style: TextStyle(color: Colors.white),
-                      ),
+              const SizedBox(
+                height: 10,
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              InputComponent(
+                controller: _passwordController,
+                hintText: "senha",
+                isPassword: true,
+              ),
+              Row(
+                children: [
+                  Observer(builder: (context) {
+                    return TextButton(
+                      onPressed: () {
+                        authStore.toogleAuthMethod();
+                      },
+                      child: Text(
+                        authStore.isRegister
+                            ? "Já possuo uma conta"
+                            : "Fazer cadastro",
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    );
+                  })
+                ],
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(horizontal: 20)),
+                  onPressed: () async {
+                    String name = _nameController.text;
+                    String email = _emailController.text;
+                    String password = _passwordController.text;
+
+                    await authentication(
+                        UserModel(name: name, email: email, password: password),
+                        authStore);
+
+                    if (authStore.errorMessage != null) {
+                      showErrorDialog(context, authStore);
+                    }
+                    navigateToHomePage(context);
+                  },
+                  child: authStore.isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text(
+                          "Entrar",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
   }
 }
 
@@ -140,7 +142,7 @@ void navigateToHomePage(BuildContext context) {
       GlobalStoreBase().currentUser != null ? true : false;
   if (isLoggedWithSuccess) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => const HomePage(),
+      builder: (context) => HomePage(),
     ));
   }
 }

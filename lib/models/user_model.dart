@@ -11,7 +11,7 @@ class UserModel {
     this.password,
   });
 
-  UserModel fromFirabaseUser(User user) {
+  factory UserModel.fromFirebase(User user) {
     return UserModel(name: user.displayName!, email: user.email!);
   }
 }

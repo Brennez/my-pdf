@@ -31,7 +31,7 @@ abstract class AuthStoreBase with Store {
     try {
       isLoading = true;
       User? firebaseUser = await authenticateWithFirebase.register(user);
-      _globalStore.setCurrentUser(user.fromFirabaseUser(firebaseUser));
+      _globalStore.setCurrentUser(UserModel.fromFirebase(firebaseUser));
       isLoading = false;
     } on FirebaseAuthErrors catch (e) {
       isLoading = false;
@@ -44,11 +44,11 @@ abstract class AuthStoreBase with Store {
     try {
       isLoading = true;
       User? firebaseUser = await authenticateWithFirebase.login(user);
-      _globalStore.setCurrentUser(user.fromFirabaseUser(firebaseUser));
+      _globalStore.setCurrentUser(UserModel.fromFirebase(firebaseUser));
       isLoading = false;
-    } catch (e) {
+    } on FirebaseAuthErrors catch (e) {
       isLoading = false;
-      errorMessage = e.toString();
+      errorMessage = e.getErrorName();
     }
   }
 
@@ -65,8 +65,13 @@ abstract class AuthStoreBase with Store {
   }
 
   @action
-  Future<User?> getLoggedUser() async {
+  Future<bool> hasLoggedUser() async {
     await Future.delayed(const Duration(milliseconds: 100));
-    return authenticateWithFirebase.getCurrentuser();
+    User? firebaseUser = authenticateWithFirebase.getCurrentuser();
+    if (firebaseUser != null) {
+      _globalStore.setCurrentUser(UserModel.fromFirebase(firebaseUser));
+      return true;
+    }
+    return false;
   }
 }

@@ -17,6 +17,8 @@ class FirebaseAuthErrors implements Exception {
         return "Usuário não encontrado";
       case "wrong-password":
         return "Senha incorreta";
+      case "invalid-credential":
+        return "Login ou senha inválidos";
       case "email-already-in-use":
         return "O email fornecido já está em uso";
 
