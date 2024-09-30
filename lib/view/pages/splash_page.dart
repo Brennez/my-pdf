@@ -1,11 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:maths_language/stores/authentication_stores/auth_store.dart';
-import 'package:maths_language/view/pages/auth_page.dart';
-import 'package:maths_language/view/pages/home_page.dart';
 
-import '../../controllers/content_controller.dart';
+import '../../controllers/file_controller.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -15,37 +12,32 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  AuthStore _authStore = AuthStore();
-  ContentController contentController = ContentController();
+  final AuthStore _authStore = AuthStore();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: handleNavigatePage(),
       builder: (context, snapshot) {
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
+        return const Center(
+          child: CircularProgressIndicator(),
         );
       },
     );
   }
 
   Future<void> handleNavigatePage() async {
-    User? loggedUser = await _authStore.getLoggedUser();
+    bool hasLoggedUser = await _authStore.hasLoggedUser();
 
-    if (loggedUser != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
+    if (hasLoggedUser) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/home',
+        (Route<dynamic> route) => false,
       );
     } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const AuthenticationPage(),
-        ),
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/auth',
+        (Route<dynamic> route) => false,
       );
     }
   }

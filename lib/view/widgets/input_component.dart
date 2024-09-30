@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 
-class InputWidget extends StatefulWidget {
+class InputComponent extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   bool isPassword;
+  bool? hasMaxLines;
 
-  InputWidget({
+  InputComponent({
     super.key,
     required this.controller,
     required this.hintText,
+    this.hasMaxLines,
     this.isPassword = false, // Define um valor padrão
   });
 
   @override
-  State<InputWidget> createState() => _InputWidgetState();
+  State<InputComponent> createState() => _InputComponentState();
 }
 
-class _InputWidgetState extends State<InputWidget> {
+class _InputComponentState extends State<InputComponent> {
   late bool obscureText;
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _InputWidgetState extends State<InputWidget> {
     return TextField(
       controller: widget.controller,
       obscureText: obscureText,
+      maxLines: widget.hasMaxLines != null ? 4 : null,
       decoration: InputDecoration(
           suffixIcon: widget.isPassword
               ? GestureDetector(
@@ -49,7 +52,7 @@ class _InputWidgetState extends State<InputWidget> {
           hintText: widget.hintText,
           hintStyle: TextStyle(color: Colors.grey.shade400),
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: Colors.deepPurple))),
     );
   }
