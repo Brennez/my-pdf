@@ -72,18 +72,28 @@ class _HomePageState extends State<HomePage> {
         children: [
           CardComponent(
             content: ContentModel(
-              name: "Meu conteúdo",
-              description: "Uma descrição bacana",
-              updatedAt: DateTime.now(),
-              thumbnailPath:
-                  "https://cdn.pixabay.com/photo/2021/07/18/04/43/laughing-kookaburra-6474620_1280.jpg",
-            ),
+                name: "Meu conteúdo",
+                description: "Uma descrição bacana",
+                updatedAt: DateTime.now(),
+                thumbnailPath:
+                    "https://cdn.pixabay.com/photo/2021/07/18/04/43/laughing-kookaburra-6474620_1280.jpg",
+                contentFile: File("coisa_bacana_pdf.pdf")),
+          ),
+          CardComponent(
+            content: ContentModel(
+                name: "Meu conteúdo",
+                description: "Uma descrição bacana",
+                updatedAt: DateTime.now(),
+                contentFile: File("coisa_bacana_pdf.pdf")),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
+        onPressed: () => Navigator.of(context).pushNamed('/create'),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }

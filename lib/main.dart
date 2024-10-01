@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:maths_language/models/content_model.dart';
+import 'package:maths_language/view/pages/create_content_page.dart';
 import 'package:maths_language/view/pages/edit_content_page.dart';
 import 'package:maths_language/view/pages/home_page.dart';
 import 'package:maths_language/view/pages/splash_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'controllers/file_controller.dart';
-import 'utils/firebase_options.dart';
+import 'utils/utils_firebase/firebase_options.dart';
 import 'view/pages/auth_page.dart';
 
 void main() async {
@@ -40,6 +41,9 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           initialRoute: "/",
+          theme: ThemeData(
+            fontFamily: "Roboto",
+          ),
           onGenerateRoute: (settings) {
             if (settings.name == "/edit") {
               final Map<String, dynamic> params =
@@ -52,7 +56,7 @@ class _MyAppState extends State<MyApp> {
                       description: params["description"],
                       updatedAt: params["date"],
                       thumbnailPath: params["imagePath"],
-                      contentFile: params["fileContent"]),
+                      contentFile: params["file"]),
                 ),
               );
             }
@@ -61,6 +65,7 @@ class _MyAppState extends State<MyApp> {
             "/": (context) => SplashPage(),
             "/auth": (context) => AuthenticationPage(),
             "/home": (context) => HomePage(),
+            "/create": (context) => CreateContentPage(),
           },
         );
       },

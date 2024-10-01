@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user_model.dart';
-import '../utils/firebase_auth_errors.dart';
+import '../utils/utils_firebase/firebase_auth_errors.dart';
 
 class RegisterWithFirebase {
   final _firebaseAuth = FirebaseAuth.instance;

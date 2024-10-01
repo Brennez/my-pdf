@@ -36,12 +36,16 @@ class CardComponent extends StatelessWidget {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   ),
-                  child: Image.network(
-                    opacity: const AlwaysStoppedAnimation(.8),
-                    content.thumbnailPath ??
-                        "", //TODO: colocar uma imagem default aqui caso o campo venha null
-                    fit: BoxFit.fill,
-                  ),
+                  child: content.thumbnailPath == null
+                      ? Image.asset(
+                          'assets/images/default_folder.png',
+                          fit: BoxFit.fill,
+                        )
+                      : Image.network(
+                          opacity: const AlwaysStoppedAnimation(.8),
+                          content.thumbnailPath!,
+                          fit: BoxFit.fill,
+                        ),
                 ),
               ),
               ListTile(
