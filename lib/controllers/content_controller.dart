@@ -1,44 +1,31 @@
+import 'dart:io';
+
 import 'package:maths_language/models/content_model.dart';
+import 'package:maths_language/stores/global_stores/global_store.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ContentController {
+  final _globalStore = GlobalStoreBase();
+
   Future<List<dynamic>> fetchContents(int id) async {
-    final List<ContentModel> mockContentList = [
-      ContentModel(
-        thumbnailPath:
-            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
-        name: "Conteúdo 1",
-        description: "Descrição do conteúdo 1",
-        updatedAt: DateTime.now().subtract(Duration(days: 1)),
-      ),
-      ContentModel(
-        thumbnailPath:
-            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
-        name: "Conteúdo 2",
-        description: "Descrição do conteúdo 2",
-        updatedAt: DateTime.now().subtract(Duration(days: 2)),
-      ),
-      ContentModel(
-        thumbnailPath:
-            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
-        name: "Conteúdo 3",
-        description: "Descrição do conteúdo 3",
-        updatedAt: DateTime.now().subtract(Duration(days: 3)),
-      ),
-      ContentModel(
-        thumbnailPath:
-            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
-        name: "Conteúdo 4",
-        description: "Descrição do conteúdo 4",
-        updatedAt: DateTime.now().subtract(Duration(days: 4)),
-      ),
-      ContentModel(
-        thumbnailPath:
-            "https://cdn.pixabay.com/photo/2014/09/05/18/32/old-books-436498_1280.jpg",
-        name: "Conteúdo 5",
-        description: "Descrição do conteúdo 5",
-        updatedAt: DateTime.now().subtract(Duration(days: 5)),
-      ),
-    ];
+    final List<ContentModel> mockContentList = [];
     return mockContentList;
+  }
+
+  Future<String?> uploadImageToStorage(File path, String extensionImage) async {
+    try {
+      Reference storageRef = FirebaseStorage.instance.ref().child(
+          "contents/thumbnails/${_globalStore.currentUser!.id}/${DateTime.now().millisecondsSinceEpoch}.${extensionImage}");
+
+      UploadTask uploadTask = storageRef.putFile(path);
+
+      TaskSnapshot snapshot = await uploadTask;
+
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      throw FirebaseException(
+          message: "Erro ao fazer upload de imagem",
+          plugin: 'Firebase Estorage');
+    }
   }
 }
