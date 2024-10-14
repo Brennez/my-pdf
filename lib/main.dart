@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
                       description: params["description"],
                       updatedAt: params["date"],
                       thumbnailPath: params["imagePath"],
-                      contentFile: params["file"]),
+                      contentFilePath: params["file"]),
                 ),
               );
             }

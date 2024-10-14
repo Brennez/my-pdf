@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:maths_language/models/content_model.dart';
+import 'package:maths_language/models/enums/file_type_enum.dart';
 import 'package:maths_language/stores/global_stores/global_store.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -12,20 +15,51 @@ class ContentController {
     return mockContentList;
   }
 
-  Future<String?> uploadImageToStorage(File path, String extensionImage) async {
+  Future<String?> uploadFileToStorage(
+      File file, FileTypeEnum fileType, String fileExtension) async {
+    UploadTask uploadTask;
+    String? contentUrl;
+
     try {
-      Reference storageRef = FirebaseStorage.instance.ref().child(
-          "contents/thumbnails/${_globalStore.currentUser!.id}/${DateTime.now().millisecondsSinceEpoch}.${extensionImage}");
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child(fileType == FileType.image ? 'thumbnails' : 'contents')
+          .child('/${DateTime.now().millisecondsSinceEpoch}.$fileExtension');
 
-      UploadTask uploadTask = storageRef.putFile(path);
+      final metadata = SettableMetadata(
+        contentType: '$fileType',
+        customMetadata: {'picked-file-path': file.path},
+      );
 
-      TaskSnapshot snapshot = await uploadTask;
+      uploadTask = ref.putFile(File(file.path), metadata);
 
-      return await snapshot.ref.getDownloadURL();
+      await uploadTask.whenComplete(() async {
+        try {
+          contentUrl = await ref.getDownloadURL();
+        } on FirebaseException catch (e) {
+          Exception("Erro ao recuperar URL do arquivo ${e.toString()}");
+        }
+      });
+      return contentUrl;
+    } on FirebaseException catch (e) {
+      Exception("Erro ao fazer upload do arquivo ${e.toString()}");
+    }
+    return null;
+  }
+
+  Future<void> saveToFirestore(ContentModel content) async {
+    try {
+      await FirebaseFirestore.instance.collection("contents").add({
+        "name": content.name,
+        "description": content.description,
+        "thumbnailPath": content.thumbnailPath,
+        "contentFile": content.contentFilePath,
+        "updatedAt": content.updatedAt,
+        "userId": _globalStore.currentUser!.id,
+      });
     } catch (e) {
       throw FirebaseException(
-          message: "Erro ao fazer upload de imagem",
-          plugin: 'Firebase Estorage');
+          message: "Erro ao salvar conteúdo", plugin: 'Firestore');
     }
   }
 }

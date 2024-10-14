@@ -67,6 +67,31 @@ mixin _$AuthStore on AuthStoreBase, Store {
         .run(() => super.registerWithEmailAndPassword(user));
   }
 
+  late final _$loginWithEmailAndPasswordAsyncAction =
+      AsyncAction('AuthStoreBase.loginWithEmailAndPassword', context: context);
+
+  @override
+  Future<void> loginWithEmailAndPassword(UserModel user) {
+    return _$loginWithEmailAndPasswordAsyncAction
+        .run(() => super.loginWithEmailAndPassword(user));
+  }
+
+  late final _$logoutAsyncAction =
+      AsyncAction('AuthStoreBase.logout', context: context);
+
+  @override
+  Future<void> logout() {
+    return _$logoutAsyncAction.run(() => super.logout());
+  }
+
+  late final _$hasLoggedUserAsyncAction =
+      AsyncAction('AuthStoreBase.hasLoggedUser', context: context);
+
+  @override
+  Future<bool> hasLoggedUser() {
+    return _$hasLoggedUserAsyncAction.run(() => super.hasLoggedUser());
+  }
+
   late final _$AuthStoreBaseActionController =
       ActionController(name: 'AuthStoreBase', context: context);
 
