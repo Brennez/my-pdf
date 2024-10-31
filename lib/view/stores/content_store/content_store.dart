@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:maths_language/controllers/content_controller.dart';
 import 'package:maths_language/models/content_model.dart';
 import 'package:maths_language/models/enums/file_type_enum.dart';
@@ -19,6 +18,9 @@ abstract class ContentStoreBase with Store {
 
   @observable
   String? errorMessage;
+
+  @observable
+  List<ContentModel> contentList = [];
 
   @action
   Future<String?> saveFileToStorage(
@@ -45,6 +47,25 @@ abstract class ContentStoreBase with Store {
     } catch (e) {
       status = ScreenStatus.error;
       errorMessage = "Erro ao salvar conteúdo";
+      throw Exception(errorMessage);
+    }
+  }
+
+  @action
+  Future<List<ContentModel>> fetchContents() async {
+    try {
+      status = ScreenStatus.loading;
+      final result = await contentController.getContentsFromFirestore();
+
+      for (var element in result) {
+        contentList.add(ContentModel.fromMap(element));
+      }
+
+      status = ScreenStatus.success;
+      return contentList;
+    } catch (e) {
+      status = ScreenStatus.error;
+      errorMessage = "Erro ao buscar conteúdos";
       throw Exception(errorMessage);
     }
   }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../models/content_model.dart';
+import '../../utils/constants/default_thumb.dart';
 
 class CardComponent extends StatelessWidget {
   final ContentModel content;
@@ -20,7 +21,7 @@ class CardComponent extends StatelessWidget {
         "date": content.updatedAt,
         "imagePath": content.thumbnailPath,
         "description": content.description,
-        "file": content.contentFile,
+        "file": content.contentFilePath,
       }),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -38,7 +39,7 @@ class CardComponent extends StatelessWidget {
                   ),
                   child: content.thumbnailPath == null
                       ? Image.asset(
-                          'assets/images/default_folder.png',
+                          defaultThumb,
                           fit: BoxFit.fill,
                         )
                       : Image.network(
@@ -57,7 +58,7 @@ class CardComponent extends StatelessWidget {
                   ),
                 ),
                 subtitle: Text(
-                  "Editado em: ${content.updatedAt}",
+                  "Criado em: ${content.createdAt}",
                   style: const TextStyle(color: Colors.grey),
                 ),
               ),

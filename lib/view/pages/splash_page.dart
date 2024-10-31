@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:maths_language/stores/authentication_stores/auth_store.dart';
+import 'package:maths_language/view/stores/authentication_stores/auth_store.dart';
 
 import '../../controllers/file_controller.dart';
 

@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:maths_language/models/content_model.dart';
-import 'package:maths_language/stores/authentication_stores/auth_store.dart';
-import 'package:maths_language/stores/global_stores/global_store.dart';
+import 'package:maths_language/view/stores/authentication_stores/auth_store.dart';
+import 'package:maths_language/view/stores/content_store/content_store.dart';
+import 'package:maths_language/view/stores/global_stores/global_store.dart';
 
 import '../widgets/card_component.dart';
 
@@ -17,6 +19,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalStoreBase _globalStore = GlobalStoreBase();
   final AuthStore _authStore = AuthStore();
+
+  final ContentStore _contentStore = ContentStore();
+
+  @override
+  void initState() {
+    super.initState();
+    _contentStore.fetchContents();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,26 +77,30 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       )),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CardComponent(
-            content: ContentModel(
-                name: "Meu conteúdo",
-                description: "Uma descrição bacana",
-                updatedAt: DateTime.now(),
-                thumbnailPath:
-                    "https://cdn.pixabay.com/photo/2021/07/18/04/43/laughing-kookaburra-6474620_1280.jpg",
-                contentFile: File("coisa_bacana_pdf.pdf")),
-          ),
-          CardComponent(
-            content: ContentModel(
-                name: "Meu conteúdo",
-                description: "Uma descrição bacana",
-                updatedAt: DateTime.now(),
-                contentFile: File("coisa_bacana_pdf.pdf")),
-          ),
-        ],
+      body: Observer(
+        builder: (context) {
+          if (_contentStore.status == ScreenStatus.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (_contentStore.contentList.isEmpty) {
+            return const Center(
+              child: Text("Nenhum conteúdo encontrado"),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: _contentStore.contentList.length,
+            itemBuilder: (context, index) {
+              ContentModel content = _contentStore.contentList[index];
+              return CardComponent(
+                content: content,
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).pushNamed('/create'),

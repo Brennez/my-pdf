@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:maths_language/models/content_model.dart';
 import 'package:maths_language/utils/file_manager_utils/custom_file_manager.dart';
 import 'package:maths_language/view/widgets/input_component.dart';
@@ -17,37 +17,63 @@ class EditContentPage extends StatefulWidget {
 
 class _EditContentPageState extends State<EditContentPage> {
   CustomFileManager fileManager = CustomFileManager();
+  XFile? _selectedImage;
+  File? _selectedFile;
 
   Future<void> _selectImage() async {
-    File? image = await fileManager.pickImageFile();
+    XFile? image = await fileManager.pickImage();
 
     if (image != null) {
       setState(() {
-        widget.content.thumbnailPath = image.path;
+        _selectedImage = image;
       });
     }
   }
 
+  Future<void> _selectContentFile() async {
+    File? file = await fileManager.pickContentFile();
+
+    if (file != null) {
+      setState(() {
+        _selectedFile = file;
+      });
+    }
+  }
+
+  Widget _getImageType() {
+    if (_selectedImage != null) {
+      return Image.file(File(_selectedImage!.path), fit: BoxFit.fill);
+    }
+
+    if (widget.content.thumbnailPath == null) {
+      return Image.asset(
+        'assets/images/default_folder.png',
+        fit: BoxFit.fill,
+      );
+    }
+
+    return Image.network(widget.content.thumbnailPath!);
+  }
+
+  String _getFilePath() {
+    if (_selectedFile != null) {
+      return _selectedFile!.uri.pathSegments.last;
+    }
+
+    if (widget.content.thumbnailPath == null) {
+      return "Adicione um arquivo";
+    }
+
+    return widget.content.contentFilePath!;
+  }
+
   @override
   Widget build(BuildContext context) {
-    String defaultThumb = 'assets/images/default_folder.png';
-
     TextEditingController titleController =
         TextEditingController(text: widget.content.name);
 
     TextEditingController descriptionController =
         TextEditingController(text: widget.content.description);
-
-    Widget _getImageType() {
-      if (widget.content.thumbnailPath == null) {
-        return Image.asset(
-          'assets/images/default_folder.png',
-          fit: BoxFit.fill,
-        );
-      }
-
-      return Image.network(widget.content.thumbnailPath!);
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -110,40 +136,15 @@ class _EditContentPageState extends State<EditContentPage> {
                   ],
                 ),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: SizedBox(
-                  height: 250,
-                  width: MediaQuery.of(context).size.width * .88,
-                  child: _getImageType(),
-                ),
-              ),
-              Container(
-                height: 34,
-                padding: const EdgeInsets.only(top: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () => _selectImage(),
-                      icon: const Icon(
-                        Icons.upload,
-                        color: Colors.black54,
-                      ),
-                      label: const Text(
-                        "Selecionar nova capa",
-                        style: TextStyle(
-                            color: Colors.black54, fontWeight: FontWeight.w500),
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStatePropertyAll(Colors.grey[200]),
-                          shape: WidgetStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14)),
-                          )),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: () => _selectImage(),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: SizedBox(
+                    height: 250,
+                    width: MediaQuery.of(context).size.width * .88,
+                    child: _getImageType(),
+                  ),
                 ),
               ),
               const Padding(
@@ -160,19 +161,33 @@ class _EditContentPageState extends State<EditContentPage> {
                   ],
                 ),
               ),
-              Container(
-                height: 30,
-                width: MediaQuery.of(context).size.width * .9,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 206, 196, 224),
-                  borderRadius: BorderRadius.circular(10), // Borda arredondada
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Text(widget.content.contentFile == null
-                      ? "Adicione um arquivo"
-                      : widget.content.contentFile!.path),
+              GestureDetector(
+                onTap: () => _selectContentFile(),
+                child: Container(
+                  height: 30,
+                  width: MediaQuery.of(context).size.width * .9,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 206, 196, 224),
+                    borderRadius:
+                        BorderRadius.circular(10), // Borda arredondada
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          child: Text(_getFilePath()),
+                        ),
+                        const Expanded(child: SizedBox()),
+                        const Icon(
+                          Icons.upload,
+                          color: Colors.black54,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               Container(

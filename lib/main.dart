@@ -62,10 +62,10 @@ class _MyAppState extends State<MyApp> {
             }
           },
           routes: {
-            "/": (context) => SplashPage(),
-            "/auth": (context) => AuthenticationPage(),
-            "/home": (context) => HomePage(),
-            "/create": (context) => CreateContentPage(),
+            "/": (context) => const SplashPage(),
+            "/auth": (context) => const AuthenticationPage(),
+            "/home": (context) => const HomePage(),
+            "/create": (context) => const CreateContentPage(),
           },
         );
       },

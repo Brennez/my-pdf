@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:maths_language/models/user_model.dart';
-import 'package:maths_language/stores/global_stores/global_store.dart';
+import 'package:maths_language/view/stores/global_stores/global_store.dart';
 import 'package:maths_language/view/pages/home_page.dart';
 
-import '../../stores/authentication_stores/auth_store.dart';
+import '../stores/authentication_stores/auth_store.dart';
 import '../widgets/input_component.dart';
 
 class AuthenticationPage extends StatefulWidget {

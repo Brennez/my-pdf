@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maths_language/controllers/register_with_firebase_controller.dart';
 import 'package:maths_language/models/user_model.dart';
-import 'package:maths_language/stores/global_stores/global_store.dart';
+import 'package:maths_language/view/stores/global_stores/global_store.dart';
 import 'package:maths_language/utils/utils_firebase/firebase_auth_errors.dart';
 import 'package:mobx/mobx.dart';
 part 'auth_store.g.dart';
